@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { IOptionData } from '@constants/optionData';
 import { colors, sizes, fonts } from '@constants/styles';
+import RippleEffect from '@components/RippleEffect';
+
 
 interface Props {
   data: IOptionData;
@@ -45,24 +47,25 @@ const OptionItem: React.FC<Props> = ({ data }) => {
       }}>
         {data.optionArray.map((option, index) => (
           <View key={index}>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'flex-end',
-                backgroundColor: colors.secondary,
-                padding: sizes.medium,
-              }}
-            >
-              <Text
+            <RippleEffect key={index}>
+              <View
                 style={{
-                  color: colors.white,
-                  fontSize: sizes.medium,
-                  fontFamily: fonts.regular,
+                  flex: 1,
+                  justifyContent: 'flex-end',
+                  padding: sizes.medium,
                 }}
               >
-                {option}
-              </Text>
-            </View>
+                <Text
+                  style={{
+                    color: colors.white,
+                    fontSize: sizes.medium,
+                    fontFamily: fonts.regular,
+                  }}
+                >
+                  {option}
+                </Text>
+              </View>
+            </RippleEffect>
             <View
               style={{
                 flex: 1,
