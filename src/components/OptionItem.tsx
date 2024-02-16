@@ -31,9 +31,9 @@ const OptionItem: React.FC<Props> = ({ data }) => {
           color: colors.white,
           fontSize: sizes.large,
           fontFamily: fonts.bold,
-          paddingTop: sizes.xl,
-          paddingBottom: sizes.base,
-          paddingHorizontal: sizes.base,
+          paddingTop: sizes.medium * 2,
+          paddingBottom: sizes.medium,
+          paddingHorizontal: sizes.medium,
         }}
       >
         {data.title}
