@@ -31,9 +31,9 @@ const optionData: IOptionData[] = [
     optionArray: ['??', '??', '??'],
   },
   {
-    id: '6',
+    id: 'About',
     title: 'Option 6',
-    optionArray: ['??', '??', '??'],
+    optionArray: ['License', 'Version v0.0.1', 'Author: Karol Kos'],
   },
 ];
 

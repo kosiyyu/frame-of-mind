@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { FlatList } from 'react-native';
 import OptionItem from 'src/components/OptionItem';
 import optionData from '@constants/optionData';
+import OptionHeader from '@components/OptionHeader';
 
 const Options: React.FC = () => {
   return (
@@ -10,8 +11,7 @@ const Options: React.FC = () => {
         data={optionData}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <OptionItem data={item} />}
-        ListHeaderComponent={() => <View><Text>Header</Text></View>}
-        ListFooterComponent={() => <View><Text>Footer</Text></View>}
+        ListHeaderComponent={() => <OptionHeader />}
       />
     </>
   );

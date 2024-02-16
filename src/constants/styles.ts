@@ -6,6 +6,9 @@ interface IColors {
   primary: string;
   secondary: string;
   tertiary: string;
+  specialDark: string;
+  specialMedium: string;
+  specialLight: string;
 };
 
 export const colors: IColors = {
@@ -16,6 +19,9 @@ export const colors: IColors = {
   primary: '#181716',
   secondary: '#2a2727',
   tertiary: '#393433',
+  specialDark: '#a550cb',
+  specialMedium: '#d980ff',
+  specialLight: '#ffb2ff',
 };
 
 interface ISizes {
@@ -27,6 +33,7 @@ interface ISizes {
   medium: number,
   large: number,
   xl: number,
+  xxl: number,
 };
 
 export const sizes: ISizes = {
@@ -38,6 +45,7 @@ export const sizes: ISizes = {
   medium: 16,
   large: 18,
   xl: 24,
+  xxl: 32,
 };
 
 interface IFonts {
