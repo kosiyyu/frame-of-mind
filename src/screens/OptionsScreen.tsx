@@ -4,7 +4,7 @@ import OptionItem from 'src/components/OptionItem';
 import optionData from '@constants/optionData';
 import OptionHeader from '@components/OptionHeader';
 
-const Options: React.FC = () => {
+const OptionsScreen: React.FC = () => {
   return (
     <>
       <StatusBar />
@@ -18,4 +18,4 @@ const Options: React.FC = () => {
   );
 };
 
-export default Options;
+export default OptionsScreen;
