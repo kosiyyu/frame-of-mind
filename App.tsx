@@ -34,46 +34,45 @@ export default function App() {
   const Tab = createBottomTabNavigator();
 
   return (
-    <SafeAreaView 
+    <SafeAreaView
       onLayout={onLayoutRootView}
       style={{
         flex: 1,
       }}
     >
-      <NavigationContainer
-      >
+      <NavigationContainer>
         <Tab.Navigator screenOptions={{
           tabBarShowLabel: false,
-            headerShown: false,
-            tabBarStyle: {
-              backgroundColor: colors.primary,
-              borderTopColor: colors.tertiary,
-              position: 'absolute',
-              bottom: 0,
-              right: 0,
-              left: 0,
-              elevation: 0,
-              height: 60,
-            },
-          }}
+          headerShown: false,
+          tabBarStyle: {
+            backgroundColor: colors.primary,
+            borderTopColor: colors.tertiary,
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            left: 0,
+            elevation: 0,
+            height: 60,
+          },
+        }}
         >
           <Tab.Screen
-            name="Calendar" 
+            name="Calendar"
             component={CalendarScreen}
             options={{
               tabBarIcon: ({ focused }) => (
                 <View
                   style={{
                     alignItems: 'center',
-                    justifyContent: 'center',                  
+                    justifyContent: 'center',
                   }}
                 >
                   <Ionicons name="calendar-outline" size={sizes.xl} color={focused ? colors.specialLight : colors.white} />
                   <Text style={{
-                      color: focused ? colors.specialLight : colors.white,
-                      fontSize: sizes.ten,
-                      paddingTop: sizes.four,
-                    }}
+                    color: focused ? colors.specialLight : colors.white,
+                    fontSize: sizes.ten,
+                    paddingTop: sizes.four,
+                  }}
                   >
                     Calendar
                   </Text>
@@ -82,22 +81,22 @@ export default function App() {
             }}
           />
           <Tab.Screen
-            name="Statistics" 
+            name="Statistics"
             component={StatisticsScreen}
             options={{
               tabBarIcon: ({ focused }) => (
                 <View
                   style={{
                     alignItems: 'center',
-                    justifyContent: 'center',                  
+                    justifyContent: 'center',
                   }}
                 >
                   <Ionicons name="stats-chart-outline" size={sizes.xl} color={focused ? colors.specialLight : colors.white} />
                   <Text style={{
-                      color: focused ? colors.specialLight : colors.white,
-                      fontSize: sizes.ten,
-                      paddingTop: sizes.four,
-                    }}
+                    color: focused ? colors.specialLight : colors.white,
+                    fontSize: sizes.ten,
+                    paddingTop: sizes.four,
+                  }}
                   >
                     Statistics
                   </Text>
@@ -106,22 +105,22 @@ export default function App() {
             }}
           />
           <Tab.Screen
-            name="Premium" 
+            name="Premium"
             component={PremiumScreen}
             options={{
               tabBarIcon: ({ focused }) => (
                 <View
                   style={{
                     alignItems: 'center',
-                    justifyContent: 'center',                  
+                    justifyContent: 'center',
                   }}
                 >
                   <Ionicons name="diamond-outline" size={sizes.xl} color={focused ? colors.specialLight : colors.white} />
                   <Text style={{
-                      color: focused ? colors.specialLight : colors.white,
-                      fontSize: sizes.ten,
-                      paddingTop: sizes.four,
-                    }}
+                    color: focused ? colors.specialLight : colors.white,
+                    fontSize: sizes.ten,
+                    paddingTop: sizes.four,
+                  }}
                   >
                     Premium
                   </Text>
@@ -130,22 +129,22 @@ export default function App() {
             }}
           />
           <Tab.Screen
-            name="Settings" 
+            name="Settings"
             component={OptionsScreen}
             options={{
               tabBarIcon: ({ focused }) => (
                 <View
                   style={{
                     alignItems: 'center',
-                    justifyContent: 'center',                  
+                    justifyContent: 'center',
                   }}
                 >
                   <Ionicons name="settings-outline" size={sizes.xl} color={focused ? colors.specialLight : colors.white} />
                   <Text style={{
-                      color: focused ? colors.specialLight : colors.white,
-                      fontSize: sizes.ten,
-                      paddingTop: sizes.four,
-                    }}
+                    color: focused ? colors.specialLight : colors.white,
+                    fontSize: sizes.ten,
+                    paddingTop: sizes.four,
+                  }}
                   >
                     Settings
                   </Text>
