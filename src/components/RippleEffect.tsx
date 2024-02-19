@@ -7,18 +7,25 @@ interface RippleEffectProps {
   color?: string;
   style?: StyleProp<ViewStyle>;
   onPress?: () => void;
+  isDisabled?: boolean;
 }
 
-const RippleEffect: React.FC<RippleEffectProps> = ({children, color = colors.specialLight, style, onPress, ...props}) => {
+const RippleEffect: React.FC<RippleEffectProps> = ({ children, color = colors.specialLight, style, onPress, isDisabled = false, ...props }) => {
   return (
     <View style={style}>
-      <TouchableNativeFeedback
-        background={TouchableNativeFeedback.Ripple(color, false)}
-        onPress={onPress}
-        {...props}
-      >
-        {children}
-      </TouchableNativeFeedback>
+      {isDisabled ? (
+        <View {...props}>
+          {children}
+        </View>
+      ) : (
+        <TouchableNativeFeedback
+          background={TouchableNativeFeedback.Ripple(color, false)}
+          onPress={onPress}
+          {...props}
+        >
+          {children}
+        </TouchableNativeFeedback>
+      )}
     </View>
   );
 };
