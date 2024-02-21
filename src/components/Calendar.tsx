@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useMemo, useCallback, useState } from 'react';
 import { View, Text } from 'react-native';
 import { colors, sizes, fonts } from '@constants/styles';
 import { days } from '@constants/daysMonths';
@@ -6,6 +6,10 @@ import FaceTest from './FaceTest';
 import RippleEffect from './RippleEffect';
 import CalendarNav from '@components/CalendarNav';
 import CalendarHeader from '@components/CalendarHeader';
+import { Key, Value, MoodEntry, set, get, getAll, remove } from '@storage/MoodEntry';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { BottomSheetHandleProps } from '@gorhom/bottom-sheet';
+import { Ionicons } from '@expo/vector-icons';
 
 class Day {
   public dayNumber: number;
@@ -69,6 +73,36 @@ const Calendar: React.FC = () => {
     return colors.white;
   };
 
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+
+  const snapPoints = useMemo(() => ['25%', '50%'], []);
+
+  const handlePresentModalPress = useCallback((day: Day) => {
+    bottomSheetModalRef.current?.present();
+    console.log('handlePresentModalPress', day.dayNumber);
+    console.log('handlePresentModalPress', day.isDisabled);
+  }, []);
+
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log('handleSheetChanges', index);
+  }, []);
+
+  const renderHandle2 = () => {
+    return (
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: colors.tertiary,
+          borderTopRightRadius: sizes.medium,
+          borderTopLeftRadius: sizes.medium,
+        }}
+      >
+        <Ionicons name="chevron-down-outline" size={30} color={colors.white} />
+      </View>
+    );
+  };
+
   return (
     <View
       style={{
@@ -90,7 +124,7 @@ const Calendar: React.FC = () => {
               style={{
                 flex: 1,
               }}
-              onPress={() => console.log(day.dayNumber)}
+              onPress={() => handlePresentModalPress(day)}
               isDisabled={day.isDisabled}
             >
               <View
@@ -116,6 +150,34 @@ const Calendar: React.FC = () => {
           ))}
         </View>
       ))}
+        <BottomSheetModal
+          ref={bottomSheetModalRef}
+          index={1}
+          snapPoints={snapPoints}
+          onChange={handleSheetChanges}
+          handleComponent={renderHandle2}
+          backgroundComponent={({ style }) => (
+            <View 
+              style={[style, { 
+                backgroundColor: colors.primary,
+                borderTopRightRadius: sizes.xxl,
+                borderTopLeftRadius: sizes.xxl,
+              }]} 
+            />
+          )}
+        >
+          <View style={{
+            flex: 1,
+            padding: sizes.medium,
+            backgroundColor: colors.secondary,
+          }}>
+            <Text style={{
+              color: colors.white,
+              fontSize: sizes.large,
+              fontFamily: fonts.medium,
+            }}>Awesome 🎉</Text>
+          </View>
+        </BottomSheetModal>
     </View>
   );
 };

@@ -10,6 +10,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors, sizes } from '@constants/styles';
 import PremiumScreen from '@screens/PremiumScreen';
 import StatisticsScreen from '@screens/StatisticsScreen';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,6 +36,8 @@ export default function App() {
   const Tab = createBottomTabNavigator();
 
   return (
+    <GestureHandlerRootView style={{flex: 1}}>
+    <BottomSheetModalProvider>
     <SafeAreaView
       onLayout={onLayoutRootView}
       style={{
@@ -155,5 +159,7 @@ export default function App() {
         </Tab.Navigator>
       </NavigationContainer>
     </SafeAreaView>
+    </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 };
