@@ -2,24 +2,12 @@ import React, { useRef, useMemo, useCallback, useState } from 'react';
 import { View, Text } from 'react-native';
 import { colors, sizes, fonts } from '@constants/styles';
 import { days } from '@constants/daysMonths';
-import FaceTest from './FaceTest';
-import RippleEffect from './RippleEffect';
 import CalendarNav from '@components/CalendarNav';
 import CalendarHeader from '@components/CalendarHeader';
-import { Key, Value, MoodEntry, set, get, getAll, remove } from '@storage/MoodEntry';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
-import { BottomSheetHandleProps } from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
-
-class Day {
-  public dayNumber: number;
-  public isDisabled: boolean;
-
-  public constructor(dayNumber: number, isDisabled: boolean) {
-    this.dayNumber = dayNumber;
-    this.isDisabled = isDisabled;
-  }
-}
+import CalendarBoard from './CalendarBoard';
+import { Day } from '@constants/types';
 
 function generateDays(date: Date): Day[] {
   const month: number = date.getMonth();
@@ -43,7 +31,6 @@ function generateDays(date: Date): Day[] {
 }
 
 const Calendar: React.FC = () => {
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // eslint-disable-next-line
   const [currentDate, setCurrentDate] = useState(new Date());
   const [date, setDate] = useState(new Date());
@@ -65,11 +52,6 @@ const Calendar: React.FC = () => {
       && currentDate.getFullYear() === date.getFullYear()) {
       return colors.specialLight;
     }
-
-    // if(day.isDisabled) {
-    //   return colors.white;
-    // }
-
     return colors.white;
   };
 
@@ -87,7 +69,7 @@ const Calendar: React.FC = () => {
     console.log('handleSheetChanges', index);
   }, []);
 
-  const renderHandle2 = () => {
+  const renderHandle = () => {
     return (
       <View
         style={{
@@ -111,51 +93,17 @@ const Calendar: React.FC = () => {
     >
       <CalendarNav decrementMonth={decrementMonth} incrementMonth={incrementMonth} date={date} />
       <CalendarHeader days={days} />
-      {Array.from({ length: Math.ceil(generatedDays.length / 7) }).map((_, weekIndex) => (
-        <View
-          key={weekIndex}
-          style={{
-            flexDirection: 'row',
-          }}
-        >
-          {generatedDays.slice(weekIndex * 7, (weekIndex + 1) * 7).map((day, dayIndex) => (
-            <RippleEffect
-              key={dayIndex}
-              style={{
-                flex: 1,
-              }}
-              onPress={() => handlePresentModalPress(day)}
-              isDisabled={day.isDisabled}
-            >
-              <View
-                key={dayIndex}
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: sizes.one,
-                  backgroundColor: day.isDisabled ? colors.black : colors.secondary,
-                }}
-              >
-                <FaceTest />
-                <Text
-                  style={{
-                    fontFamily: fonts.medium,
-                    color: autoDayTextColor(day),
-                  }}
-                >
-                  {day.dayNumber}
-                </Text>
-              </View>
-            </RippleEffect>
-          ))}
-        </View>
-      ))}
+      <CalendarBoard 
+        generatedDays={generatedDays} 
+        handlePresentModalPress={handlePresentModalPress} 
+        autoDayTextColor={autoDayTextColor} 
+      />
         <BottomSheetModal
           ref={bottomSheetModalRef}
           index={1}
           snapPoints={snapPoints}
           onChange={handleSheetChanges}
-          handleComponent={renderHandle2}
+          handleComponent={renderHandle}
           backgroundComponent={({ style }) => (
             <View 
               style={[style, { 
