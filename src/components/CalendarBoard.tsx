@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 import { colors, sizes, fonts } from '@constants/styles';
-import FaceTest from '@components/FaceTest';
+import EmojiHappy from '@components/EmojiHappy';
 import RippleEffect from '@components/RippleEffect';
 import { Day } from '@constants/types';
 
@@ -38,7 +38,7 @@ const CalendarBoard: React.FC<CalendarBoardProps> = ({generatedDays, handlePrese
                 backgroundColor: day.isDisabled ? colors.black : colors.secondary,
               }}
             >
-              <FaceTest />
+              <EmojiHappy />
               <Text
                 style={{
                   fontFamily: fonts.medium,

@@ -7,3 +7,8 @@ export class Day {
     this.isDisabled = isDisabled;
   }
 }
+
+export interface EmojiProps {
+  width?: number;
+  height?: number;
+}
