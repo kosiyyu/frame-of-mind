@@ -1,6 +1,6 @@
-import React, { useRef, useMemo, useCallback, useState } from 'react';
-import { View, Text } from 'react-native';
-import { colors, sizes, fonts } from '@constants/styles';
+import React, { useRef, useMemo, useCallback, useState, useEffect, useContext } from 'react';
+import { View } from 'react-native';
+import { colors, sizes } from '@constants/styles';
 import { days } from '@constants/daysMonths';
 import CalendarNav from '@components/CalendarNav';
 import CalendarHeader from '@components/CalendarHeader';
@@ -8,41 +8,58 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import CalendarBoard from './CalendarBoard';
 import { Day } from '@constants/types';
-
-function generateDays(date: Date): Day[] {
-  const month: number = date.getMonth();
-  const year: number = date.getFullYear();
-  const daysInMonth: number = new Date(year, month + 1, 0).getDate();
-  let firstDayOfMonth: number = new Date(year, month, 1).getDay();
-  firstDayOfMonth = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
-  const daysInLastMonth: number = new Date(year, month, 0).getDate();
-  const days: Day[] = Array.from({ length: daysInMonth }, (_, i) => new Day(i + 1, false));
-
-  for (let i = 0; i < firstDayOfMonth; i++) {
-    days.unshift(new Day(daysInLastMonth - i, true));
-  }
-
-  let num = 1;
-  while ((days.length) % 7 !== 0) {
-    days.push(new Day(num++, true));
-  }
-
-  return days;
-}
+import * as SQLite from "expo-sqlite";
+import CalendarEmojiSelector from '@components/CalendarEmojiSelector';
+import Context from '@context/Context';
+import { MoodEntrySimplified } from '@constants/types';
 
 const Calendar: React.FC = () => {
+  const db = useContext(Context) as SQLite.SQLiteDatabase;
   // eslint-disable-next-line
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [moodEntery, setMoodEntery] = useState<MoodEntrySimplified>({ mood: 0, date: ''});
   const [date, setDate] = useState(new Date());
-  const generatedDays = generateDays(date);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const snapPoints = useMemo(() => ['22%', '22%'], []);
+  
+  // const generateDayString = (date: Date): string => {
+  //   return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  // };
+
+  const generateDayString = (date: Date, day: number): string => {
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${day}`;
+  };
+
+  const generatedDays = (date: Date): Day[] => {
+    const month: number = date.getMonth();
+    const year: number = date.getFullYear();
+    const daysInMonth: number = new Date(year, month + 1, 0).getDate();
+    let firstDayOfMonth: number = new Date(year, month, 1).getDay();
+    firstDayOfMonth = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+    const daysInLastMonth: number = new Date(year, month, 0).getDate();
+    const days: Day[] = Array.from({ length: daysInMonth }, (_, i) => new Day(i + 1, false));
+  
+    for (let i = 0; i < firstDayOfMonth; i++) {
+      days.unshift(new Day(daysInLastMonth - i, true));
+    }
+  
+    let num = 1;
+    while ((days.length) % 7 !== 0) {
+      days.push(new Day(num++, true));
+    }
+  
+    return days;
+  };
 
   const decrementMonth = (): void => {
-    const newDate: Date = new Date(date); newDate.setMonth(date.getMonth() - 1);
+    const newDate: Date = new Date(date); 
+    newDate.setMonth(date.getMonth() - 1);
     setDate(newDate);
   };
 
   const incrementMonth = (): void => {
-    const newDate: Date = new Date(date); newDate.setMonth(date.getMonth() + 1);
+    const newDate: Date = new Date(date); 
+    newDate.setMonth(date.getMonth() + 1);
     setDate(newDate);
   };
 
@@ -52,22 +69,59 @@ const Calendar: React.FC = () => {
       && currentDate.getFullYear() === date.getFullYear()) {
       return colors.specialLight;
     }
+
     return colors.white;
   };
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-  const snapPoints = useMemo(() => ['25%', '50%'], []);
-
   const handlePresentModalPress = useCallback((day: Day) => {
     bottomSheetModalRef.current?.present();
-    console.log('handlePresentModalPress', day.dayNumber);
-    console.log('handlePresentModalPress', day.isDisabled);
-  }, []);
+    const dateString = generateDayString(date, day.dayNumber);
+    setMoodEntery({...moodEntery, date: dateString });
+  }, [date]);
+
+  // const handlePresentModalPress = useCallback((day: Day) => {
+  //   bottomSheetModalRef.current?.dismiss(); // dismiss the modal if it's open
+  //   const dateString = generateDayString(date, day.dayNumber);
+  //   setMoodEntery({...moodEntery, date: dateString });
+  //   setTimeout(() => {
+  //     bottomSheetModalRef.current?.present(); // present the modal after state is updated
+  //   }, 0);
+  // }, [date]);
+
+  useEffect(() => {
+    console.log('moodEntery', moodEntery);
+  }, [moodEntery]);
 
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
+    if(index === -1) {
+      console.log('closed');
+    }
   }, []);
+
+  const add = (mood: number, date: string) => {
+    if (mood === null || mood === undefined) {
+      return false;
+    }
+    if (date === null || date === undefined) { // todo -> check if it's date
+      return false;
+    }
+
+    db.transaction(
+      (tx) => {
+        tx.executeSql("insert into mood_entery (mood, date) values (?, ?)", [mood, date]);
+        tx.executeSql("select * from mood_entery", [], (_, { rows }) =>
+          console.log(JSON.stringify(rows))
+        );
+      },
+      null,
+      {}
+    );
+  };
+
+  const onSelectedChange = (selected: number) => {
+    setMoodEntery({...moodEntery, mood: selected });
+  };
 
   const renderHandle = () => {
     return (
@@ -94,7 +148,7 @@ const Calendar: React.FC = () => {
       <CalendarNav decrementMonth={decrementMonth} incrementMonth={incrementMonth} date={date} />
       <CalendarHeader days={days} />
       <CalendarBoard 
-        generatedDays={generatedDays} 
+        generatedDays={generatedDays(date)} 
         handlePresentModalPress={handlePresentModalPress} 
         autoDayTextColor={autoDayTextColor} 
       />
@@ -118,12 +172,10 @@ const Calendar: React.FC = () => {
             flex: 1,
             padding: sizes.medium,
             backgroundColor: colors.secondary,
+            alignItems: 'center',
+            // justifyContent: 'center',
           }}>
-            <Text style={{
-              color: colors.white,
-              fontSize: sizes.large,
-              fontFamily: fonts.medium,
-            }}>Awesome 🎉</Text>
+            <CalendarEmojiSelector moodEntery={moodEntery} onSelectedChange={onSelectedChange} />
           </View>
         </BottomSheetModal>
     </View>

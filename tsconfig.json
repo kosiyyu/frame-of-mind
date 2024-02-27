@@ -9,6 +9,7 @@
       "@components/*": ["src/components/*"],
       "@screens/*": ["src/screens/*"],
       "@storage/*": ["src/storage/*"],
+      "@context/*": ["src/context/*"],
     }
   }
 }
