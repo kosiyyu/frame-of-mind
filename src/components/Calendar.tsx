@@ -1,5 +1,7 @@
-import React, { useRef, useMemo, useCallback, useState, useEffect, useContext } from 'react';
-import { View } from 'react-native';
+import React, { useRef, useMemo, useCallback, useState, useEffect,
+  // useContext 
+  } from 'react';
+import { View, Text } from 'react-native';
 import { colors, sizes } from '@constants/styles';
 import { days } from '@constants/daysMonths';
 import CalendarNav from '@components/CalendarNav';
@@ -8,13 +10,16 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Ionicons } from '@expo/vector-icons';
 import CalendarBoard from './CalendarBoard';
 import { Day } from '@constants/types';
-import * as SQLite from "expo-sqlite";
+// import * as SQLite from "expo-sqlite";
 import CalendarEmojiSelector from '@components/CalendarEmojiSelector';
-import Context from '@context/Context';
+// import Context from '@context/Context';
 import { MoodEntrySimplified } from '@constants/types';
+import { useSQLiteContext, type SQLiteDatabase } from 'expo-sqlite/next';
+import RippleEffect from './RippleEffect';
 
 const Calendar: React.FC = () => {
-  const db = useContext(Context) as SQLite.SQLiteDatabase;
+  // const db = useContext(Context) as SQLite.SQLiteDatabase;
+  const db = useSQLiteContext();
   // eslint-disable-next-line
   const [currentDate, setCurrentDate] = useState(new Date());
   const [moodEntery, setMoodEntery] = useState<MoodEntrySimplified>({ mood: 0, date: ''});
@@ -96,28 +101,45 @@ const Calendar: React.FC = () => {
     console.log('handleSheetChanges', index);
     if(index === -1) {
       console.log('closed');
+      //add(moodEntery.mood, moodEntery.date);
+      getAll();
     }
   }, []);
 
-  const add = (mood: number, date: string) => {
-    if (mood === null || mood === undefined) {
-      return false;
+  const getAll = async() => {
+    try {
+      await db.execAsync(`PRAGMA journal_mode = WAL;`);
+      await db.withTransactionAsync(async () => {
+        const result = await db.getAllAsync('SELECT * FROM mood_entery');
+        console.log('result', result);
+      });
+    } catch (error) {
+      console.log('error', error);
     }
-    if (date === null || date === undefined) { // todo -> check if it's date
-      return false;
-    }
-
-    db.transaction(
-      (tx) => {
-        tx.executeSql("insert into mood_entery (mood, date) values (?, ?)", [mood, date]);
-        tx.executeSql("select * from mood_entery", [], (_, { rows }) =>
-          console.log(JSON.stringify(rows))
-        );
-      },
-      null,
-      {}
-    );
   };
+
+  const add = async(mood: number, date: string) => {
+    try {
+      await db.withTransactionAsync(async () => {
+        await db.runAsync("insert into mood_entery (mood, moodDate) values (?, ?)", [mood, date]);
+        console.log('added');
+      });
+    } catch (error) {
+      console.log('error', error);
+    };
+  };
+
+  //   db.transaction(
+  //     (tx) => {
+  //       tx.executeSql("insert into mood_entery (mood, date) values (?, ?)", [mood, date]);
+  //       tx.executeSql("select * from mood_entery", [], (_, { rows }) =>
+  //         console.log(JSON.stringify(rows))
+  //       );
+  //     },
+  //     null,
+  //     {}
+  //   );
+  // };
 
   const onSelectedChange = (selected: number) => {
     setMoodEntery({...moodEntery, mood: selected });
@@ -176,6 +198,9 @@ const Calendar: React.FC = () => {
             // justifyContent: 'center',
           }}>
             <CalendarEmojiSelector moodEntery={moodEntery} onSelectedChange={onSelectedChange} />
+            <RippleEffect onPress={() => add(moodEntery.mood, moodEntery.date)}>
+              <Text>Add</Text>
+            </RippleEffect>
           </View>
         </BottomSheetModal>
     </View>
