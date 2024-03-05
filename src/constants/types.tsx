@@ -1,13 +1,8 @@
-export class Day {
-  public dayNumber: number;
-  public isDisabled: boolean;
-
-  public constructor(dayNumber: number, isDisabled: boolean) {
-    this.dayNumber = dayNumber;
-    this.isDisabled = isDisabled;
-  };
-};
-
+export interface FetchedDay {
+  id: number;
+  mood: number;
+  moodDate: string;
+}
 
 export interface EmojiProps {
   width?: number;
@@ -24,7 +19,7 @@ export interface MoodEntrySimplified {
   date: string;
 };
 
-export class Day2 {
+export class Day {
   public moodEntery: MoodEntrySimplified;
   public isDisabled: boolean;
 

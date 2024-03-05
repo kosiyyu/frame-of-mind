@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import RippleEffect from './RippleEffect';
@@ -12,6 +12,30 @@ interface CalendarNavProps {
 }
 
 const CalendarNav: React.FC<CalendarNavProps> = ({ decrementMonth, incrementMonth, date }) => {
+  const [lastPressDecrement, setLastPressDecrement] = useState(0);
+  const [lastPressIncrement, setLastPressIncrement] = useState(0);
+  
+  const handleDecrement = (): void => {
+    const now = new Date().getTime();
+    const timeDiff = now - lastPressDecrement;
+    if (timeDiff < 300) {
+      return;
+    }
+    setLastPressDecrement(now);
+    decrementMonth();
+  };
+
+  const handleIncrement = (): void => {
+    const now = new Date().getTime();
+    const timeDiff = now - lastPressIncrement;
+    if (timeDiff < 300) {
+      return;
+    }
+    setLastPressIncrement(now);
+    incrementMonth();
+  };
+
+
   return (
     <View
       style={{
@@ -21,12 +45,13 @@ const CalendarNav: React.FC<CalendarNavProps> = ({ decrementMonth, incrementMont
         backgroundColor: colors.black,
       }}
     >
+
       <RippleEffect
         style={{
           height: 60,
           width: 60,
         }}
-        onPress={decrementMonth}
+        onPress={handleDecrement}
       >
         <View
           style={{
@@ -57,7 +82,7 @@ const CalendarNav: React.FC<CalendarNavProps> = ({ decrementMonth, incrementMont
           height: 60,
           width: 60,
         }}
-        onPress={incrementMonth}
+        onPress={handleIncrement}
       >
         <View
           style={{
@@ -75,4 +100,4 @@ const CalendarNav: React.FC<CalendarNavProps> = ({ decrementMonth, incrementMont
   );
 };
 
-export default CalendarNav;
+export default React.memo(CalendarNav);

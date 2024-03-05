@@ -1,12 +1,9 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import { colors, fonts, sizes } from '@constants/styles';
+import { days } from '@constants/daysMonths';
 
-interface CalendarHeaderProps {
-  days: string[];
-}
-
-const CalendarHeader: React.FC<CalendarHeaderProps> = ({ days }) => {
+const CalendarHeader: React.FC = () => {
   return (
     <View
       style={{
@@ -38,4 +35,4 @@ const CalendarHeader: React.FC<CalendarHeaderProps> = ({ days }) => {
   );
 };
 
-export default CalendarHeader;
+export default React.memo(CalendarHeader);

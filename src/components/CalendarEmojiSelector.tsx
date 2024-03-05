@@ -1,6 +1,4 @@
-import React, { 
-  //useContext, 
-  useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { colors, sizes } from '@constants/styles';
 import EmojiAngery from '@components/EmojiAngery';
@@ -9,8 +7,6 @@ import EmojiSad from '@components/EmojiSad';
 import HappyEmoji from '@components/EmojiHappy';
 import NeutralEmoji from '@components/EmojiNeutral';
 import RippleEffect from './RippleEffect';
-// import Context from '@context/Context';
-// import * as SQLite from "expo-sqlite";
 import { MoodEntrySimplified } from '@constants/types';
 import { months } from '@constants/daysMonths';
 
@@ -19,8 +15,7 @@ interface CalendarEmojiSelectorProps {
   onSelectedChange: (selected: number) => void;
 }
 
-const CalendarEmojiSelector: React.FC<CalendarEmojiSelectorProps> = ({ moodEntery, onSelectedChange }) => {
-  //const db = useContext(Context) as SQLite.SQLiteDatabase;
+const CalendarEmojiSelector: React.FC<CalendarEmojiSelectorProps> = React.memo(({ moodEntery, onSelectedChange }) => {
   const [selected, setSelected] = useState<number>(moodEntery.mood || 0);
   const previouslySelected = moodEntery || 0;
 
@@ -86,6 +81,7 @@ const CalendarEmojiSelector: React.FC<CalendarEmojiSelectorProps> = ({ moodEnter
       </View>
     </View>
   );
-};
+});
+
 
 export default CalendarEmojiSelector;
