@@ -8,6 +8,7 @@ export class Day {
   };
 };
 
+
 export interface EmojiProps {
   width?: number;
   height?: number;
@@ -21,4 +22,14 @@ export interface MoodEntery {
 export interface MoodEntrySimplified {
   mood: number;
   date: string;
+};
+
+export class Day2 {
+  public moodEntery: MoodEntrySimplified;
+  public isDisabled: boolean;
+
+  public constructor(moodEntery: MoodEntrySimplified, isDisabled: boolean) {
+    this.moodEntery = moodEntery;
+    this.isDisabled = isDisabled;
+  };
 };

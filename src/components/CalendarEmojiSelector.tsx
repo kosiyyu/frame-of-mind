@@ -25,6 +25,7 @@ const CalendarEmojiSelector: React.FC<CalendarEmojiSelectorProps> = ({ moodEnter
   const previouslySelected = moodEntery || 0;
 
   useEffect(() => {
+    console.log('moodEntery.mood', moodEntery.mood);
     const isUpdateRequired = selected !== previouslySelected.mood;
     if (!isUpdateRequired) {
       return;
