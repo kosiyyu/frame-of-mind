@@ -1,6 +1,4 @@
-import React, { useRef, useMemo, useCallback, useState, useEffect,
-  // useContext 
-  } from 'react';
+import React, { useRef, useMemo, useCallback, useState } from 'react';
 import { View, Text } from 'react-native';
 import { colors, sizes } from '@constants/styles';
 import { days } from '@constants/daysMonths';
@@ -17,7 +15,6 @@ import RippleEffect from './RippleEffect';
 import { useSignal } from '@hooks/useSignal';
 
 const Calendar: React.FC = () => {
-  // const db = useContext(Context) as SQLite.SQLiteDatabase;
   const db = useSQLiteContext();
   // eslint-disable-next-line
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -66,47 +63,12 @@ const Calendar: React.FC = () => {
     // last day of the month
     const dateTo = `${year}-${fixed((month % 12) + 1)}-${fixed(daysInMonth)}`;
 
-    // try {
-    //   await db.execAsync(`PRAGMA journal_mode = WAL;`);
-    //   await db.withTransactionAsync(async () => {
-    //     fetchedDays = await db.getAllAsync('SELECT * FROM mood_entery WHERE moodDate >= ? AND moodDate <= ?;', [dateFrom, dateTo]);
-    //     for(let i = 0; i < days.length; i++) {
-    //       for(let j = 0; j < fetchedDays.length; j++) {
-    //         if(fetchedDays[j].moodDate === days[i].moodEntery.date) {
-    //           console.log('test', fetchedDays[j].moodDate, days[i].moodEntery.date, fetchedDays[j].mood);
-    //           days[i].moodEntery.mood = fetchedDays[j].mood;
-    //         }
-    //       }
-    //     }
-    //   });
-    // } catch (error) {
-    //   console.log('error generatedDaysNEW', error);
-    // }
-
-    // try {
-    //   db.runSync("BEGIN TRANSACTION;");
-    //   fetchedDays = db.getAllSync('SELECT * FROM mood_entery WHERE moodDate >= ? AND moodDate <= ?;', [dateFrom, dateTo]);
-    //   for(let i = 0; i < days.length; i++) {
-    //     for(let j = 0; j < fetchedDays.length; j++) {
-    //       if(fetchedDays[j].moodDate === days[i].moodEntery.date) {
-    //         console.log('test', fetchedDays[j].moodDate, days[i].moodEntery.date, fetchedDays[j].mood);
-    //         days[i].moodEntery.mood = fetchedDays[j].mood;
-    //       }
-    //     }
-    //   }
-    //   db.runSync("COMMIT;");
-    // } catch (error) {
-    //   console.log('error generatedDaysNEW', error);
-    //   db.runSync("ROLLBACK;");
-    // }
-
     try {
       await db.withExclusiveTransactionAsync(async (txn) => {
         fetchedDays = await txn.getAllAsync('SELECT * FROM mood_entery WHERE moodDate >= ? AND moodDate <= ?;', [dateFrom, dateTo]);
         for(let i = 0; i < days.length; i++) {
           for(let j = 0; j < fetchedDays.length; j++) {
             if(fetchedDays[j].moodDate === days[i].moodEntery.date) {
-              //console.log('test', fetchedDays[j].moodDate, days[i].moodEntery.date, fetchedDays[j].mood);
               days[i].moodEntery.mood = fetchedDays[j].mood;
             }
           }
@@ -141,22 +103,13 @@ const Calendar: React.FC = () => {
   }, [currentDate, date]);
 
   const handlePresentModalPress = useCallback((day: Day2) => {
-    bottomSheetModalRef.current?.present();
-    // const dateString = generateDayString(date, day.dayNumber);
+    bottomSheetModalRef.current?.present();;
     const fixed = (num: number): number | string => {
       return num < 10 ? `0${num}` : num;
     };
     console.log('kkkk', day.moodEntery.mood);
     setMoodEntery({mood: day.moodEntery.mood, date: `${fixed(date.getFullYear())}-${fixed((date.getMonth() % 12) + 1)}-${day.moodEntery.date.split('-')[2]}` });
   }, [date]);
-
-  // useEffect(() => {
-  //   console.log('moodEntery', moodEntery);
-  // }, [moodEntery]);
-
-  // useEffect(() => {
-  //   console.log('date', date);
-  // }, [date]);
   
   const handleSheetChanges = useCallback((index: number) => {
     console.log('handleSheetChanges', index);
@@ -168,28 +121,6 @@ const Calendar: React.FC = () => {
   }, [moodEntery, date]);
 
   const add = async(mood: number, date: string) => {
-    // try {
-    //   await db.execAsync(`PRAGMA journal_mode = WAL;`);
-    //   await db.withTransactionAsync(async () => {
-    //     await db.runAsync("insert or replace into mood_entery (mood, moodDate) values (?, ?)", [mood, date]);
-    //     console.log('added');
-    //     boardCalendarSignal();
-    //   });
-    // } catch (error) {
-    //   console.log('error', error);
-    // };
-
-    // try {
-    //   db.runSync("BEGIN TRANSACTION;");
-    //   db.runSync(`PRAGMA journal_mode = WAL;`);
-    //   db.runSync("insert or replace into mood_entery (mood, moodDate) values (?, ?)", [mood, date]);
-    //   db.runSync("COMMIT;");
-    //   boardCalendarSignal();
-    // } catch (error) {
-    //   console.log('error', error);
-    //   db.runSync("ROLLBACK;");
-    // };
-
     db.withExclusiveTransactionAsync(async (txn) => {
       await txn.execAsync(`insert or replace into mood_entery (mood, moodDate) values (${mood}, '${date}');`);
     })
