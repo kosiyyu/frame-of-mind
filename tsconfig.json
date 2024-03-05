@@ -11,6 +11,7 @@
       "@storage/*": ["src/storage/*"],
       "@context/*": ["src/context/*"],
       "@hooks/*": ["src/hooks/*"],
+      "@utils/*": ["src/utils/*"],
     }
   }
 }

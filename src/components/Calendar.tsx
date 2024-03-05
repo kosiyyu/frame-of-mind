@@ -13,6 +13,7 @@ import { MoodEntrySimplified } from '@constants/types';
 import { useSQLiteContext} from 'expo-sqlite/next';
 import RippleEffect from './RippleEffect';
 import { useSignal } from '@hooks/useSignal';
+import { ensureTwoDigits } from '@utils/calendar';
 
 const Calendar: React.FC = () => {
   const db = useSQLiteContext();
@@ -32,21 +33,17 @@ const Calendar: React.FC = () => {
     firstDayOfMonth = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
     const daysInLastMonth: number = new Date(year, month, 0).getDate();
 
-    const fixed = (num: number): number | string => {
-      return num < 10 ? `0${num}` : num;
-    };
-
-    const days: Day2[] = Array.from({ length: daysInMonth }, (_, i) => new Day2({mood: 0, date: `${year}-${fixed((month % 12) + 1)}-${fixed(i + 1)}`}, false));
+    const days: Day2[] = Array.from({ length: daysInMonth }, (_, i) => new Day2({mood: 0, date: `${year}-${ensureTwoDigits((month % 12) + 1)}-${ensureTwoDigits(i + 1)}`}, false));
     
     // add at the begginig of the array
     for (let i = 0; i < firstDayOfMonth; i++) {
-      days.unshift(new Day2({mood: 0, date: `${year}-${fixed(((month - 1) % 12) + 1)}-${fixed(daysInLastMonth - i)}`}, true));//`${year}-${month}-${i + 1}`daysInLastMonth - i
+      days.unshift(new Day2({mood: 0, date: `${year}-${ensureTwoDigits(((month - 1) % 12) + 1)}-${ensureTwoDigits(daysInLastMonth - i)}`}, true));//`${year}-${month}-${i + 1}`daysInLastMonth - i
     }
   
     // add at the end of the array
     let num = 1;
     while ((days.length) % 7 !== 0) {
-      days.push(new Day2({mood: 0, date: `${year}-${fixed(((month + 1) % 12) + 1)}-${fixed(num++)}`}, true));
+      days.push(new Day2({mood: 0, date: `${year}-${ensureTwoDigits(((month + 1) % 12) + 1)}-${ensureTwoDigits(num++)}`}, true));
     }
     //
      
@@ -58,10 +55,10 @@ const Calendar: React.FC = () => {
 
     let fetchedDays: FetchedDay[];
     // first day of the month
-    const dateFrom = `${year}-${fixed((month % 12) + 1)}-01`;
+    const dateFrom = `${year}-${ensureTwoDigits((month % 12) + 1)}-01`;
 
     // last day of the month
-    const dateTo = `${year}-${fixed((month % 12) + 1)}-${fixed(daysInMonth)}`;
+    const dateTo = `${year}-${ensureTwoDigits((month % 12) + 1)}-${ensureTwoDigits(daysInMonth)}`;
 
     try {
       await db.withExclusiveTransactionAsync(async (txn) => {
@@ -104,11 +101,8 @@ const Calendar: React.FC = () => {
 
   const handlePresentModalPress = useCallback((day: Day2) => {
     bottomSheetModalRef.current?.present();;
-    const fixed = (num: number): number | string => {
-      return num < 10 ? `0${num}` : num;
-    };
     console.log('kkkk', day.moodEntery.mood);
-    setMoodEntery({mood: day.moodEntery.mood, date: `${fixed(date.getFullYear())}-${fixed((date.getMonth() % 12) + 1)}-${day.moodEntery.date.split('-')[2]}` });
+    setMoodEntery({mood: day.moodEntery.mood, date: `${ensureTwoDigits(date.getFullYear())}-${ensureTwoDigits((date.getMonth() % 12) + 1)}-${day.moodEntery.date.split('-')[2]}` });
   }, [date]);
   
   const handleSheetChanges = useCallback((index: number) => {
