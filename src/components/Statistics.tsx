@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { Dimensions } from 'react-native';
 import { View, Text, FlatList } from 'react-native';
 import { useSQLiteContext } from 'expo-sqlite/next';
 import { ensureTwoDigits } from '@utils/calendar';
 import { FetchedDay } from '@constants/types';
+import { LineChart } from "react-native-chart-kit";
+import { colors, sizes, fonts } from '@constants/styles';
+import { days } from '@constants/daysMonths';
+import { AbstractChartConfig } from 'react-native-chart-kit/dist/AbstractChart';
 
 const Statistics: React.FC = () => {
   const db = useSQLiteContext();
@@ -52,12 +57,55 @@ const Statistics: React.FC = () => {
     return days;
   };
 
+  const screenWidth = Dimensions.get('window').width;
+
+  const data = {
+    labels: days,
+    datasets: [
+      {
+        data: [1, 0, 3, 5, 4, 1, 2],
+        strokeWidth: 1,
+      }
+    ],
+    legend: ['Mood level'],
+  };
+  
+  const chartConfig: AbstractChartConfig = {
+    decimalPlaces: 0,
+    color: () => colors.specialLight,
+    labelColor: () => colors.white,
+    style: {
+      borderRadius: 16,
+    },
+    propsForDots: {
+      r: '3',
+      strokeWidth: '0',
+      stroke: colors.white
+    },
+  };
+
   return (
-    <View>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colors.black,
+      }}
+    >
       <View>
-        <Text>Weekly activity</Text>
-        <View>
-          <FlatList
+        <View 
+          style={{
+            alignItems: 'center',
+            backgroundColor: colors.black,
+          }}
+        >
+          <LineChart
+            data={data}
+            width={screenWidth}
+            height={256}
+            chartConfig={chartConfig}
+            bezier
+          />
+          {/* <FlatList
             data={weeklyActivityData}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
@@ -66,7 +114,7 @@ const Statistics: React.FC = () => {
                 <Text>{item.mood}</Text>
               </View>
             )}
-          />
+          /> */}
         </View>
       </View>
 
