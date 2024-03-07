@@ -1,13 +1,12 @@
+import Statistics from '@components/Statistics';
 import React from 'react';
-import { StatusBar, View, Text } from 'react-native';
+import { StatusBar } from 'react-native';
 
 const StatisticsScreen: React.FC = () => {
   return (
     <>
       <StatusBar />
-      <View>
-        <Text>Statistics</Text>
-      </View>
+      <Statistics />
     </>
   );
 };

@@ -8,13 +8,14 @@ import Svg, {
   Path
 } from "react-native-svg";
 /* SVGR has dropped some elements not supported by react-native-svg: filter */
+import { EmojiProps } from "@constants/types";
 
-const FaceTest: React.FC = (props) => {
+const EmojiSad: React.FC<EmojiProps>  = (props) => {
   return (
-    <Svg
+    <Svg 
       viewBox="0 0 800 800"
-      width={45}
-      height={45}
+      width={props.width || 45}
+      height={props.height || 45}
       {...props}
     >
       <Defs>
@@ -54,44 +55,46 @@ const FaceTest: React.FC = (props) => {
           fill="url(#c)"
         />
         <Path
-          d="M204 362.5q50 50 50 0"
+          d="M325 361q50 56 50 0"
           strokeWidth={20}
           stroke="#000"
           fill="none"
         />
         <Path
-          d="M204 362.5q50 50 50 0"
+          d="M325 361q50 56 50 0"
           strokeWidth={6.666666666666667}
           stroke="url(#e)"
           fill="none"
         />
         <Path
-          d="M541 362.5q50 50 50 0"
+          d="M425 362.5q50 50 50 0"
           strokeWidth={20}
           stroke="#000"
           fill="none"
         />
         <Path
-          d="M541 362.5q50 50 50 0"
+          d="M425 362.5q50 50 50 0"
           strokeWidth={6.666666666666667}
           stroke="url(#e)"
           fill="none"
         />
         <Path
-          d="M347.5 418.5q50 50 105 0"
+          d="M373.5 513.75q50-67 91 0"
           strokeWidth={20}
           stroke="hsl(3, 100%, 51%)"
           fill="none"
+          transform="rotate(359 400 400)"
         />
         <Path
-          d="M347.5 418.5q50 50 105 0"
+          d="M373.5 513.75q50-67 91 0"
           strokeWidth={6.666666666666667}
           stroke="url(#h)"
           fill="none"
+          transform="rotate(359 400 400)"
         />
       </G>
     </Svg>
   );
 };
 
-export default FaceTest;
+export default EmojiSad;
