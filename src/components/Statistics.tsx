@@ -17,7 +17,6 @@ const Statistics: React.FC = () => {
     generate()
       .then((data) => {
         setWeeklyActivityData(data);
-        console.log('data', data);
       }).catch((error) => {
         console.log('error generate', error);
       });
@@ -55,6 +54,7 @@ const Statistics: React.FC = () => {
     }
 
     // brute
+    console.error("F I X   T H I S   F U N C T I O N");
     const result = days.map((day, index) => {
       return { x: index, y: day.mood };
     });
@@ -62,15 +62,15 @@ const Statistics: React.FC = () => {
     return result;
   };
 
-  const data: Point[] = [
-    { x: 0, y: 0 },
-    { x: 1, y: 1 },
-    { x: 2, y: 2 },
-    { x: 3, y: 0 },
-    { x: 4, y: 4 },
-    { x: 5, y: 5 },
-    { x: 6, y: 4 },
-  ];
+  // const data: Point[] = [
+  //   { x: 0, y: 0 },
+  //   { x: 1, y: 1 },
+  //   { x: 2, y: 2 },
+  //   { x: 3, y: 0 },
+  //   { x: 4, y: 4 },
+  //   { x: 5, y: 5 },
+  //   { x: 6, y: 4 },
+  // ];
 
   const xLabel = days;
   const yLabel = ['0', '1', '2', '3', '4', '5'];

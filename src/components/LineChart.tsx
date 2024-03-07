@@ -39,7 +39,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, xLabel, yLabel, lineWidth, 
   const padding = 30;
 
   const maxY = Math.max(...data.map(p => p.y));
-  const minY = Math.min(...data.map(p => p.y));
+  const minY = 0;//Math.min(...data.map(p => p.y));
 
   // X scale point
   const xPoint = (point: Point) => (point.x * (width - 2 * padding)) / (data.length - 1) + padding;
