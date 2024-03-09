@@ -11,7 +11,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Day, FetchedDay } from '@constants/types';
 import { MoodEntrySimplified } from '@constants/types';
 import { useSQLiteContext } from 'expo-sqlite/next';
-import { ensureTwoDigits } from '@utils/calendar';
+import { ensureTwoDigits, updateDate } from '@utils/calendar';
 import { Animated } from 'react-native';
 
 const Calendar: React.FC = () => {
@@ -43,20 +43,24 @@ const Calendar: React.FC = () => {
     firstDayOfMonth = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
     const daysInLastMonth: number = new Date(year, month, 0).getDate();
 
-    const days: Day[] = Array.from({ length: daysInMonth }, (_, i) => new Day({ mood: 0, date: `${year}-${ensureTwoDigits((month % 12) + 1)}-${ensureTwoDigits(i + 1)}` }, false));
+    //const days: Day[] = Array.from({ length: daysInMonth }, (_, i) => new Day({ mood: 0, date: `${year}-${ensureTwoDigits((month % 12) + 1)}-${ensureTwoDigits(i + 1)}` }, false));
+    const days: Day[] = Array.from({ length: daysInMonth }, (_, i) => new Day({ mood: 0, date: updateDate(date, i + 1, 0) }, false));
+
 
     for (let i = 0; i < firstDayOfMonth; i++) {
-      days.unshift(new Day({ mood: 0, date: `${year}-${ensureTwoDigits(((month - 1) % 12) + 1)}-${ensureTwoDigits(daysInLastMonth - i)}` }, true));//`${year}-${month}-${i + 1}`daysInLastMonth - i
+      //days.unshift(new Day({ mood: 0, date: `${year}-${ensureTwoDigits(((month - 1) % 12) + 1)}-${ensureTwoDigits(daysInLastMonth - i)}` }, true));
+      days.unshift(new Day({ mood: 0, date: updateDate(date, daysInLastMonth - i, -1) }, true));
     }
 
     let num = 1;
     while ((days.length) % 7 !== 0) {
-      days.push(new Day({ mood: 0, date: `${year}-${ensureTwoDigits(((month + 1) % 12) + 1)}-${ensureTwoDigits(num++)}` }, true));
+      //days.push(new Day({ mood: 0, date: `${year}-${ensureTwoDigits(((month + 1) % 12) + 1)}-${ensureTwoDigits(num++)}` }, true));
+      days.push(new Day({ mood: 0, date: updateDate(date, num++, 1) }, true));
     }
 
     let fetchedDays: FetchedDay[];
-    const dateFrom = `${year}-${ensureTwoDigits((month % 12) + 1)}-01`;
-    const dateTo = `${year}-${ensureTwoDigits((month % 12) + 1)}-${ensureTwoDigits(daysInMonth)}`;
+    const dateFrom = updateDate(date, 1, -4);
+    const dateTo = updateDate(date, daysInMonth, 4);
 
     try {
       await db.withExclusiveTransactionAsync(async (txn) => {
@@ -77,14 +81,17 @@ const Calendar: React.FC = () => {
     return days;
   };
 
-  const generateCalendarPage = (year: number, month: number, daysInMonth: number, daysInLastMonth: number, firstDayOfMonth: number): Day[] => {
-    const days: Day[] = Array.from({ length: daysInMonth }, (_, i) => new Day({ mood: 0, date: `${year}-${ensureTwoDigits((month % 12) + 1)}-${ensureTwoDigits(i + 1)}` }, false));
+  const generateCalendarPage = (date: Date, daysInMonth: number, daysInLastMonth: number, firstDayOfMonth: number): Day[] => {
+    //const days: Day[] = Array.from({ length: daysInMonth }, (_, i) => new Day({ mood: 0, date: `${year}-${ensureTwoDigits((month % 12) + 1)}-${ensureTwoDigits(i + 1)}` }, false));
+    const days: Day[] = Array.from({ length: daysInMonth }, (_, i) => new Day({ mood: 0, date: updateDate(date, i + 1, 0) }, false));
     for (let i = 0; i < firstDayOfMonth; i++) {
-      days.unshift(new Day({ mood: 0, date: `${year}-${ensureTwoDigits(((month - 1) % 12) + 1)}-${ensureTwoDigits(daysInLastMonth - i)}` }, true));
+      //days.unshift(new Day({ mood: 0, date: `${year}-${ensureTwoDigits(((month - 1) % 12) + 1)}-${ensureTwoDigits(daysInLastMonth - i)}` }, true));
+      days.unshift(new Day({ mood: 0, date: updateDate(date, daysInLastMonth - i, -1) }, true));
     }
     let num = 1;
     while ((days.length) % 7 !== 0) {
-      days.push(new Day({ mood: 0, date: `${year}-${ensureTwoDigits(((month + 1) % 12) + 1)}-${ensureTwoDigits(num++)}` }, true));
+      //days.push(new Day({ mood: 0, date: `${year}-${ensureTwoDigits(((month + 1) % 12) + 1)}-${ensureTwoDigits(num++)}` }, true));
+      days.push(new Day({ mood: 0, date: updateDate(date, num++, 1) }, true));
     }
     return days;
   };
@@ -99,31 +106,58 @@ const Calendar: React.FC = () => {
 
     const calendarPages: Day[][] = [];
 
-    for(let i = 0; i < 4; i++) {
-      const localYear = year;
-      const localMonth = month + i - 1;
-      const localDaysInMonth = new Date(localYear, localMonth + 1, 0).getDate();
-      let localFirstDayOfMonth = new Date(localYear, localMonth, 1).getDay();
-      localFirstDayOfMonth = localFirstDayOfMonth === 0 ? 6 : localFirstDayOfMonth - 1;
-      const localDaysInLastMonth = new Date(localYear, localMonth, 0).getDate();
+    calendarPages.push(generateCalendarPage(date, daysInMonth, daysInLastMonth, firstDayOfMonth));
 
-      const page = generateCalendarPage(localYear, localMonth, localDaysInMonth, localDaysInLastMonth, localFirstDayOfMonth);
+    for(let i = 1; i <= 4; i++) {
+      const currentMonth = new Date(updateDate(date, 1, -i));
+      const currentMonthFlag = new Date(updateDate(date, 1, -i + 1));
+      currentMonthFlag.setDate(currentMonthFlag.getDate() - 1);
+      const currentMonthLength = currentMonthFlag.getDate();
+
+      const firstDayOfCurrentMonth = currentMonth.getDay() === 0 ? 6 : currentMonth.getDay() - 1;
+
+      const perviousMonthFlag = new Date(updateDate(date, 1, -i));
+      perviousMonthFlag.setDate(perviousMonthFlag.getDate() - 1);
+      const prevoiusMonthLength = perviousMonthFlag.getDate();
+
+      //console.log(currentMonth, currentMonthLength, prevoiusMonthLength, firstDayOfCurrentMonth);
+      const page = generateCalendarPage(currentMonth, currentMonthLength, prevoiusMonthLength, firstDayOfCurrentMonth);
+      calendarPages.unshift(page);
+
+      // console.log('-----------------');
+      // console.log(localDaysInMonth);
+      // console.log(localDate);
+      // for(const p of page) {
+      //   console.log(p);
+      // }
+      // console.log('-----------------');
+      
+    }
+
+    for(let i = 1; i <= 4; i++) {
+      const currentMonth = new Date(updateDate(date, 1, i));
+      const currentMonthFlag = new Date(updateDate(date, 1, i + 1));
+      currentMonthFlag.setDate(currentMonthFlag.getDate() - 1);
+      const currentMonthLength = currentMonthFlag.getDate();
+
+      const firstDayOfCurrentMonth = currentMonth.getDay() === 0 ? 6 : currentMonth.getDay() - 1;
+
+      const nextMonthFlag = new Date(updateDate(date, 1, i + 2));
+      nextMonthFlag.setDate(nextMonthFlag.getDate() - 1);
+      const nextMonthLength = nextMonthFlag.getDate();
+
+      const page = generateCalendarPage(currentMonth, currentMonthLength, nextMonthLength, firstDayOfCurrentMonth);
       calendarPages.push(page);
     }
 
-    generateCalendarPage(year, month, daysInMonth, daysInLastMonth, firstDayOfMonth);
-
-    for(let i = 0; i < 4; i++) {
-      const localYear = year;
-      const localMonth = month + i + 1;
-      const localDaysInMonth = new Date(localYear, localMonth + 1, 0).getDate();
-      let localFirstDayOfMonth = new Date(localYear, localMonth, 1).getDay();
-      localFirstDayOfMonth = localFirstDayOfMonth === 0 ? 6 : localFirstDayOfMonth - 1;
-      const localDaysInLastMonth = new Date(localYear, localMonth, 0).getDate();
-
-      const page = generateCalendarPage(localYear, localMonth, localDaysInMonth, localDaysInLastMonth, localFirstDayOfMonth);
-      calendarPages.push(page);
-    }
+    // for(const page of calendarPages) {
+    //   for(const day of page) {
+    //     if(!day.isDisabled) {
+    //       console.log(day.moodEntery.date, day.moodEntery.mood);
+    //       break;
+    //     }
+    //   }
+    // }
 
     let localYear: number = year;
     let localMonth: number = month - 4;
@@ -161,6 +195,13 @@ const Calendar: React.FC = () => {
       console.log('generateCalendarPages', error);
     }
     
+    for(const page of calendarPages) {
+      console.log('-----------------');
+      for(const day of page) {
+        console.log(day.moodEntery.date, day.moodEntery.mood);
+      }
+      console.log('-----------------');
+    }
     return calendarPages;
   };
 
@@ -175,6 +216,7 @@ const Calendar: React.FC = () => {
       }).catch(error => {
         console.log('error', error);
       });
+      genrateCalendarPages(date);
   }, [date]);
 
   const decrementMonth = (): void => {
