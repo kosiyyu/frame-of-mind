@@ -91,7 +91,8 @@ const Statistics: React.FC = () => {
           alignItems: 'center',
           backgroundColor: colors.secondary,
           padding: sizes.medium,
-          borderRadius: sizes.medium,
+          // borderRadius: sizes.medium,
+          paddingLeft: sizes.xxl, // !!!
           margin: sizes.medium,
         }}
       >

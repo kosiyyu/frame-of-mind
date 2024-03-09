@@ -12,9 +12,7 @@ import PremiumScreen from '@screens/PremiumScreen';
 import StatisticsScreen from '@screens/StatisticsScreen';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import Context from 'src/context/Context';
-import { Platform } from 'react-native';
-import { SQLiteProvider, useSQLiteContext, type SQLiteDatabase } from 'expo-sqlite/next';
+import { SQLiteProvider, type SQLiteDatabase } from 'expo-sqlite/next';
 import * as SQLite from 'expo-sqlite/next';
 import { Suspense } from 'react';
 
