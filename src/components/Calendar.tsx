@@ -120,18 +120,8 @@ const Calendar: React.FC = () => {
       perviousMonthFlag.setDate(perviousMonthFlag.getDate() - 1);
       const prevoiusMonthLength = perviousMonthFlag.getDate();
 
-      //console.log(currentMonth, currentMonthLength, prevoiusMonthLength, firstDayOfCurrentMonth);
       const page = generateCalendarPage(currentMonth, currentMonthLength, prevoiusMonthLength, firstDayOfCurrentMonth);
       calendarPages.unshift(page);
-
-      // console.log('-----------------');
-      // console.log(localDaysInMonth);
-      // console.log(localDate);
-      // for(const p of page) {
-      //   console.log(p);
-      // }
-      // console.log('-----------------');
-      
     }
 
     for(let i = 1; i <= 4; i++) {
@@ -149,15 +139,6 @@ const Calendar: React.FC = () => {
       const page = generateCalendarPage(currentMonth, currentMonthLength, nextMonthLength, firstDayOfCurrentMonth);
       calendarPages.push(page);
     }
-
-    // for(const page of calendarPages) {
-    //   for(const day of page) {
-    //     if(!day.isDisabled) {
-    //       console.log(day.moodEntery.date, day.moodEntery.mood);
-    //       break;
-    //     }
-    //   }
-    // }
 
     let localYear: number = year;
     let localMonth: number = month - 4;
@@ -195,13 +176,13 @@ const Calendar: React.FC = () => {
       console.log('generateCalendarPages', error);
     }
     
-    for(const page of calendarPages) {
-      console.log('-----------------');
-      for(const day of page) {
-        console.log(day.moodEntery.date, day.moodEntery.mood);
-      }
-      console.log('-----------------');
-    }
+    // for(const page of calendarPages) {
+    //   console.log('-----------------');
+    //   for(const day of page) {
+    //     console.log(day.moodEntery.date, day.moodEntery.mood);
+    //   }
+    //   console.log('-----------------');
+    // }
     return calendarPages;
   };
 
